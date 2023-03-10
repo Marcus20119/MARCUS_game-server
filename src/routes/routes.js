@@ -1,9 +1,9 @@
 import authRouter from './authRouter';
-// import exampleRouter from './exampleRouter';
-// import crudRouter from './crudRouter';
+import getRouter from './getRouter';
 
 const initWebRoutes = app => {
   app.use('/auth', authRouter);
+  app.use('/g', getRouter);
 };
 
 export default initWebRoutes;

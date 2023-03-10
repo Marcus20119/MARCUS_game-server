@@ -30,8 +30,8 @@ module.exports = {
       avatar: {
         type: Sequelize.TEXT,
       },
-      role: {
-        type: Sequelize.STRING,
+      roleId: {
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,

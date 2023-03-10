@@ -17,66 +17,62 @@ async function handleRefreshToken(clientData) {
         resolve({
           status: 401,
           payload: {
-            errCode: 4,
-            message: 'Not authorized',
+            message: 'refreshToken is needed',
           },
         });
-      }
-
-      jwt.verify(
-        clientData.refreshToken,
-        process.env.REFRESH_TOKEN_SECRET,
-        async (err, data) => {
-          // Đoạn code này phải viết bên trong verify để lấy ra được id có trong accessKey
-          const { refreshToken: userRefreshToken } =
-            await db.RefreshToken.findOne({
-              where: {
-                userId: data.id,
-              },
-              raw: true,
-            });
-          // Kiểm tra xem refreshToken có trong refreshToken table của user không
-          if (clientData.refreshToken !== userRefreshToken) {
-            resolve({
-              status: 403,
-              payload: {
-                errCode: 9,
-                message: 'Forbidden',
-              },
-            });
-          }
-          /**
-           * Kiểm tra xem refreshToken này có chứa REFRESH_TOKEN_SECRET không
-           * Nếu không thì trả lỗi
-           * Nếu có thì trả về new accessToken
-           *  */
-          if (err) {
-            resolve({
-              status: 403,
-              payload: {
-                errCode: 5,
-                message: 'Forbidden',
-              },
-            });
-          }
-          // trong data có iat và exp, 2 thông số này ta không cần thêm vào payload
-          const newAccessToken = jwt.sign(
-            { email: data.email, id: data.id },
-            process.env.ACCESS_TOKEN_SECRET,
-            {
-              expiresIn: '60s',
+      } else {
+        jwt.verify(
+          clientData.refreshToken,
+          process.env.REFRESH_TOKEN_SECRET,
+          async (err, data) => {
+            // Đoạn code này phải viết bên trong verify để lấy ra được id có trong accessKey
+            const { refreshToken: userRefreshToken } =
+              await db.RefreshToken.findOne({
+                where: {
+                  userId: data.id,
+                },
+                raw: true,
+              });
+            // Kiểm tra xem refreshToken có trong refreshToken table của user không
+            if (clientData.refreshToken !== userRefreshToken) {
+              resolve({
+                status: 403,
+                payload: {
+                  message: 'refreshToken not found',
+                },
+              });
             }
-          );
-          resolve({
-            status: 200,
-            payload: {
-              errCode: 0,
-              message: '',
-              newAccessToken,
-            },
-          });
-        }
-      );
+            /**
+             * Kiểm tra xem refreshToken này có chứa REFRESH_TOKEN_SECRET không
+             * Nếu không thì trả lỗi
+             * Nếu có thì trả về new accessToken
+             *  */
+            if (err) {
+              resolve({
+                status: 403,
+                payload: {
+                  message: 'Invalid refreshToken',
+                },
+              });
+            }
+            // trong data có iat và exp, 2 thông số này ta không cần thêm vào payload
+            const newAccessToken = jwt.sign(
+              { email: data.email, id: data.id },
+              process.env.ACCESS_TOKEN_SECRET,
+              {
+                expiresIn: '15s',
+              }
+            );
+            resolve({
+              status: 200,
+              payload: {
+                message: 'Create new accessToken successfully',
+                newAccessToken,
+              },
+            });
+          }
+        );
+      }
     } catch (err) {
       reject(err);
     }
@@ -156,7 +152,7 @@ async function handleSignIn(signInData) {
         { email, id },
         process.env.ACCESS_TOKEN_SECRET,
         {
-          expiresIn: '60s',
+          expiresIn: '15s',
         }
       );
 
@@ -226,10 +222,11 @@ async function handleSignUp(signUpData) {
         });
       }
 
+      // Không có lỗi thì tạo user mới và lưu vào database
       const newUser = await db.User.build({
         ...signUpData,
         password: bcrypt.hashSync(signUpData.password, salt),
-        role: signUpData.role || 'player',
+        role: 0,
       });
       await newUser.save();
 
