@@ -1,7 +1,6 @@
 import db from '../models';
 
 async function handleTest(data) {
-  console.log(data);
   return new Promise(async (resolve, reject) => {
     try {
       const data = await db.User.findAll();
