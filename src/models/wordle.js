@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       nWinR5: DataTypes.INTEGER,
       nWinR6: DataTypes.INTEGER,
       nLose: DataTypes.INTEGER,
+      nPlay: DataTypes.INTEGER,
     },
     {
       sequelize,

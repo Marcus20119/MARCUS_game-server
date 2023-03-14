@@ -1,13 +1,34 @@
 import db from '../models';
 
-async function handleTest(data) {
+/**
+ *
+ * @param {'User' | 'Wordle'} modelName
+ * @returns
+ */
+async function getAllData(modelName, query) {
+  const offset = query?.page ? (query.page - 1) * 10 : 0;
+  const limit = 10;
   return new Promise(async (resolve, reject) => {
     try {
-      const data = await db.User.findAll();
+      if (!modelName) {
+        reject('missing modelName');
+      }
+      const data = await db[modelName].findAll({
+        offset,
+        limit,
+        order: [
+          [
+            query?.field ? query.field : 'id',
+            query?.order ? query.order : 'DESC',
+          ],
+        ],
+      });
       resolve({
         status: 200,
         payload: {
-          message: 'Get successfully',
+          message: `Get page ${
+            query?.page ? query.page : 1
+          } data from ${modelName} successfully`,
           data,
         },
       });
@@ -17,4 +38,30 @@ async function handleTest(data) {
   });
 }
 
-export { handleTest };
+/**
+ *
+ * @param {'User' | 'Wordle'} modelName
+ * @param {number} id
+ * @returns
+ */
+async function getDataByUserId(modelName, userId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!modelName) {
+        reject('missing modelName');
+      }
+      const data = await db[modelName].findOne({ where: { userId } });
+      resolve({
+        status: 200,
+        payload: {
+          message: `Get data successfully`,
+          data,
+        },
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+export { getAllData, getDataByUserId };

@@ -31,11 +31,12 @@ async function handleSaveWordleResult(clientData) {
       if (userWordleData) {
         let { id, ...newUserWordleData } = userWordleData;
         if (clientData.status === 'lose') {
-          newUserWordleData.nLose = userWordleData + 1;
+          newUserWordleData.nLose = userWordleData.nLose + 1;
         } else if (clientData.status === 'win') {
           newUserWordleData[`nWinR${clientData.currentRow}`] =
             userWordleData[`nWinR${clientData.currentRow}`] + 1;
         }
+        newUserWordleData.nPlay = userWordleData.nPlay + 1;
         await db.Wordle.update(newUserWordleData, {
           where: {
             userId: clientData.userId,
@@ -52,6 +53,7 @@ async function handleSaveWordleResult(clientData) {
           nWinR5: 0,
           nWinR6: 0,
           nLose: 0,
+          nPlay: 1,
         };
         if (clientData.status === 'lose') {
           newUserWordleData.nLose = 1;

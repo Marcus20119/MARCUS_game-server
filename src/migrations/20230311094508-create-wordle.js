@@ -33,6 +33,9 @@ module.exports = {
       nLose: {
         type: Sequelize.INTEGER,
       },
+      nPlay: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
