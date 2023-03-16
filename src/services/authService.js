@@ -139,7 +139,7 @@ async function handleSignIn(signInData) {
       );
       if (!isPasswordCorrect) {
         resolve({
-          status: 403,
+          status: 400,
           payload: {
             message: 'Wrong password',
           },
@@ -159,7 +159,6 @@ async function handleSignIn(signInData) {
       resolve({
         status: 200,
         payload: {
-          errCode: 0,
           message: '',
           userData: { email, id, ...rest },
           accessToken,
@@ -226,7 +225,7 @@ async function handleSignUp(signUpData) {
       const newUser = await db.User.build({
         ...signUpData,
         password: bcrypt.hashSync(signUpData.password, salt),
-        role: 0,
+        roleId: 0,
       });
       await newUser.save();
 

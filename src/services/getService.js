@@ -18,11 +18,13 @@ async function getAllData(modelName, query) {
         limit,
         order: [
           [
-            query?.field ? query.field : 'id',
-            query?.order ? query.order : 'DESC',
+            query?.orderField ? query.orderField : 'id',
+            query?.orderType ? query.orderType : 'DESC',
           ],
         ],
+        raw: true,
       });
+      const countRow = await db[modelName].count();
       resolve({
         status: 200,
         payload: {
@@ -30,6 +32,7 @@ async function getAllData(modelName, query) {
             query?.page ? query.page : 1
           } data from ${modelName} successfully`,
           data,
+          totalPages: Math.floor(countRow / 10 + 1),
         },
       });
     } catch (err) {
