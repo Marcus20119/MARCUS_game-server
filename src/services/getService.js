@@ -5,7 +5,7 @@ import db from '../models';
  * @param {'User' | 'Wordle'} modelName
  * @returns
  */
-async function getAllData(modelName, query) {
+async function getAllData(modelName, query, type) {
   const offset = query?.page ? (query.page - 1) * 10 : 0;
   const limit = 10;
   return new Promise(async (resolve, reject) => {
@@ -16,6 +16,7 @@ async function getAllData(modelName, query) {
       const data = await db[modelName].findAll({
         offset,
         limit,
+        where: { isDeleted: type === 'deleted' ? 1 : 0 },
         order: [
           [
             query?.orderField ? query.orderField : 'id',
@@ -24,7 +25,9 @@ async function getAllData(modelName, query) {
         ],
         raw: true,
       });
-      const countRow = await db[modelName].count();
+      const { count: countRow } = await db[modelName].findAndCountAll({
+        where: { isDeleted: type === 'deleted' ? 1 : 0 },
+      });
       resolve({
         status: 200,
         payload: {
@@ -32,7 +35,10 @@ async function getAllData(modelName, query) {
             query?.page ? query.page : 1
           } data from ${modelName} successfully`,
           data,
-          totalPages: Math.floor(countRow / 10 + 1),
+          totalPages:
+            countRow % limit === 0
+              ? Math.floor(countRow / limit)
+              : Math.floor(countRow / limit + 1),
         },
       });
     } catch (err) {
@@ -53,12 +59,29 @@ async function getDataByUserId(modelName, userId) {
       if (!modelName) {
         reject('missing modelName');
       }
-      const data = await db[modelName].findOne({ where: { userId } });
+      let data;
+      if (modelName === 'User') {
+        data = await db[modelName].findOne({
+          where: { id: userId },
+          raw: true,
+        });
+      } else {
+        data = await db[modelName].findOne({ where: { userId }, raw: true });
+      }
+      const { password, ...resData } = data;
+      if (!data) {
+        resolve({
+          status: 404,
+          payload: {
+            message: 'Data not found',
+          },
+        });
+      }
       resolve({
         status: 200,
         payload: {
           message: `Get data successfully`,
-          data,
+          data: resData,
         },
       });
     } catch (err) {

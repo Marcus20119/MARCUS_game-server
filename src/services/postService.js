@@ -74,5 +74,80 @@ async function handleSaveWordleResult(clientData) {
     }
   });
 }
+async function handleSaveTictactoeResult(clientData) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      // Kiểm tra xem data cos status và userId hay không
+      if (!clientData.status && !clientData.userId) {
+        resolve({
+          status: 422,
+          payload: {
+            message: 'Missing parameters',
+          },
+        });
+      }
+      // Kiểm tra xem data cos status và userId hay không
+      if (clientData.status === 'win' && !clientData.playerMark) {
+        resolve({
+          status: 422,
+          payload: {
+            message: 'Missing "playerMark" parameter',
+          },
+        });
+      }
 
-export { handleSaveWordleResult };
+      const userTictactoeData = await db.Tictactoe.findOne({
+        where: { userId: clientData.userId },
+        raw: true,
+      });
+
+      // Nếu đã có dữ liệu chơi trước đây thì cập nhật
+      if (userTictactoeData) {
+        let { id, ...newUserTictactoeData } = userTictactoeData;
+        if (clientData.status === 'lose') {
+          newUserTictactoeData.nLose = userTictactoeData.nLose + 1;
+        } else if (clientData.status === 'win') {
+          newUserTictactoeData[`nWin${clientData.playerMark}`] =
+            userTictactoeData[`nWin${clientData.playerMark}`] + 1;
+        } else if (clientData.status === 'draw') {
+          newUserTictactoeData.nDraw = userTictactoeData.nDraw + 1;
+        }
+        newUserTictactoeData.nPlay = userTictactoeData.nPlay + 1;
+        await db.Tictactoe.update(newUserTictactoeData, {
+          where: {
+            userId: clientData.userId,
+          },
+        });
+        // Nếu là lần đầu tiên chơi thì tạo dữ liệu mới
+      } else {
+        let newUserTictactoeData = {
+          userId: clientData.userId,
+          nWinX: 0,
+          nWinO: 0,
+          nLose: 0,
+          nDraw: 0,
+          nPlay: 1,
+        };
+        if (clientData.status === 'lose') {
+          newUserTictactoeData.nLose = 1;
+        } else if (clientData.status === 'win') {
+          newUserTictactoeData[`nWin${clientData.playerMark}`] = 1;
+        } else if (clientData.status === 'draw') {
+          newUserTictactoeData.nDraw = 1;
+        }
+        await db.Tictactoe.create(newUserTictactoeData);
+      }
+
+      resolve({
+        status: 200,
+        payload: {
+          message: "Update user's Tictactoe data successfully",
+        },
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+export { handleSaveWordleResult, handleSaveTictactoeResult };

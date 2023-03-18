@@ -10,5 +10,11 @@ postRouter.post(
   checkPlayer,
   postController.handleSaveWordleResult
 );
+postRouter.post(
+  '/save-tictactoe-result',
+  checkToken,
+  checkPlayer,
+  postController.handleSaveTictactoeResult
+);
 
 export default postRouter;

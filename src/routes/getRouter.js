@@ -17,10 +17,16 @@ getRouter.get(
   getController.getAllDataFromWordle
 );
 getRouter.get(
-  '/users',
+  '/users/:type',
   checkToken,
   checkAdmin,
   getController.getAllDataFromUsers
+);
+getRouter.get(
+  '/user/:userId',
+  checkToken,
+  checkAdmin,
+  getController.getUserByUserId
 );
 
 export default getRouter;

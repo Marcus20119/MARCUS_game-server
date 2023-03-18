@@ -155,7 +155,6 @@ async function handleSignIn(signInData) {
           expiresIn: '15s',
         }
       );
-
       resolve({
         status: 200,
         payload: {
@@ -226,6 +225,7 @@ async function handleSignUp(signUpData) {
         ...signUpData,
         password: bcrypt.hashSync(signUpData.password, salt),
         roleId: 0,
+        isDeleted: 0,
       });
       await newUser.save();
 
