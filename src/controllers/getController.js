@@ -13,6 +13,18 @@ class GetController {
       return res.status(500).json(err);
     }
   }
+  async getTictactoeByUserId(req, res) {
+    try {
+      const { status, payload } = await getService.getDataByUserId(
+        'Tictactoe',
+        req.params.userId
+      );
+      return res.status(status).json(payload);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  }
   async getAllDataFromWordle(req, res) {
     try {
       const { status, payload } = await getService.getAllData(

@@ -2,7 +2,7 @@ import db from '../models';
 
 /**
  *
- * @param {'User' | 'Wordle'} modelName
+ * @param {'User' | 'Wordle' | 'Tictactoe'} modelName
  * @returns
  */
 async function getAllData(modelName, query, type) {
@@ -49,7 +49,7 @@ async function getAllData(modelName, query, type) {
 
 /**
  *
- * @param {'User' | 'Wordle'} modelName
+ * @param {'User' | 'Wordle' | 'Tictactoe'} modelName
  * @param {number} id
  * @returns
  */

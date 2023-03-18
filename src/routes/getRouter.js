@@ -17,6 +17,12 @@ getRouter.get(
   getController.getAllDataFromWordle
 );
 getRouter.get(
+  '/tictactoe/:userId',
+  checkToken,
+  checkPlayer,
+  getController.getTictactoeByUserId
+);
+getRouter.get(
   '/users/:type',
   checkToken,
   checkAdmin,
