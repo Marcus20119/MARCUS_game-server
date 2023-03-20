@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import db from '../models';
 
 /**
@@ -68,7 +69,8 @@ async function getDataByUserId(modelName, userId) {
       } else {
         data = await db[modelName].findOne({ where: { userId }, raw: true });
       }
-      const { password, ...resData } = data;
+      if (data) {
+      }
       if (!data) {
         resolve({
           status: 404,
@@ -77,6 +79,7 @@ async function getDataByUserId(modelName, userId) {
           },
         });
       }
+      const { password, UserId, ...resData } = data;
       resolve({
         status: 200,
         payload: {
@@ -90,4 +93,118 @@ async function getDataByUserId(modelName, userId) {
   });
 }
 
-export { getAllData, getDataByUserId };
+async function getChartPipeData() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { count: wordleCount } = await db.User.findAndCountAll({
+        where: {
+          '$Wordle.userId$': {
+            [Op.ne]: null,
+          },
+          '$Tictactoe.userId$': null,
+        },
+        attributes: { exclude: ['password'] },
+        include: [
+          {
+            model: db.Tictactoe,
+            required: false,
+            as: 'Tictactoe',
+            attributes: [],
+          },
+          {
+            model: db.Wordle,
+            required: false,
+            as: 'Wordle',
+            attributes: [],
+          },
+        ],
+        raw: true,
+      });
+
+      const { count: tictactoeCount } = await db.User.findAndCountAll({
+        where: {
+          '$Tictactoe.userId$': {
+            [Op.ne]: null,
+          },
+          '$Wordle.userId$': null,
+        },
+        attributes: { exclude: ['password'] },
+        include: [
+          {
+            model: db.Tictactoe,
+            required: false,
+            as: 'Tictactoe',
+            attributes: [],
+          },
+          {
+            model: db.Wordle,
+            required: false,
+            as: 'Wordle',
+            attributes: [],
+          },
+        ],
+        raw: true,
+      });
+
+      const { count: bothCount } = await db.User.findAndCountAll({
+        where: {
+          '$Tictactoe.userId$': {
+            [Op.ne]: null,
+          },
+          '$Wordle.userId$': {
+            [Op.ne]: null,
+          },
+        },
+        attributes: { exclude: ['password'] },
+        include: [
+          {
+            model: db.Tictactoe,
+            required: false,
+            as: 'Tictactoe',
+            attributes: [],
+          },
+          {
+            model: db.Wordle,
+            required: false,
+            as: 'Wordle',
+            attributes: [],
+          },
+        ],
+        raw: true,
+      });
+
+      const userCount = await db.User.count();
+
+      const pipeData = [
+        {
+          label: 'Wordle',
+          value: wordleCount,
+        },
+        {
+          label: 'Tic Tac Toe',
+          value: tictactoeCount,
+        },
+        {
+          label: 'All games',
+          value: bothCount,
+        },
+        {
+          label: 'None',
+          value: userCount - (wordleCount + tictactoeCount) - bothCount,
+        },
+      ];
+
+      resolve({
+        status: 200,
+        payload: {
+          message: `Get data successfully`,
+          data: pipeData,
+        },
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+export { getAllData, getDataByUserId, getChartPipeData };

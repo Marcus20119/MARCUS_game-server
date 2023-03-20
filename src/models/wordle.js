@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.User);
     }
   }
   Wordle.init(
@@ -28,5 +29,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Wordle',
     }
   );
+
   return Wordle;
 };

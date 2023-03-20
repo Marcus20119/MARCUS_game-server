@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.hasOne(models.Wordle);
+      this.hasOne(models.Tictactoe);
+      this.hasOne(models.RefreshToken);
     }
   }
   User.init(

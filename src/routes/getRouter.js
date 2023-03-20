@@ -34,5 +34,11 @@ getRouter.get(
   checkAdmin,
   getController.getUserByUserId
 );
+getRouter.get(
+  '/chart/pipe',
+  checkToken,
+  checkAdmin,
+  getController.getChartPipeData
+);
 
 export default getRouter;
