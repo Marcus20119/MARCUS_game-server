@@ -13,6 +13,7 @@ app.use(express.json());
 
 // Disable CORS
 app.use(cors());
+app.options('*', cors());
 
 configStaticFiles(app);
 initWebRoutes(app);
