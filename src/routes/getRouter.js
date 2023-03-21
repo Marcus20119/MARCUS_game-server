@@ -40,5 +40,11 @@ getRouter.get(
   checkAdmin,
   getController.getChartPipeData
 );
+getRouter.get(
+  '/chart/grid/:type',
+  // checkToken,
+  // checkAdmin,
+  getController.getChartGridData
+);
 
 export default getRouter;

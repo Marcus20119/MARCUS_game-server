@@ -1,4 +1,41 @@
+import { getCurrentTime } from '../helpers';
 import db from '../models';
+
+/**
+ *
+ * @param {'Wordle' | 'Tic Tac Toe'} game
+ * @returns
+ */
+
+async function handleSetGameHistoryData(game) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { day, month, year } = getCurrentTime();
+      const currentDayData = await db.GameHistory.findOne({
+        where: { year, month, day, game },
+        raw: true,
+      });
+      if (currentDayData) {
+        await db.GameHistory.update(
+          { nPlay: currentDayData.nPlay + 1 },
+          {
+            where: {
+              year,
+              month,
+              day,
+              game,
+            },
+          }
+        );
+      } else {
+        await db.GameHistory.create({ year, month, day, game, nPlay: 1 });
+      }
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
 
 async function handleSaveWordleResult(clientData) {
   return new Promise(async (resolve, reject) => {
@@ -62,7 +99,7 @@ async function handleSaveWordleResult(clientData) {
         }
         await db.Wordle.create(newUserWordleData);
       }
-
+      await handleSetGameHistoryData('Wordle');
       resolve({
         status: 200,
         payload: {
@@ -137,6 +174,8 @@ async function handleSaveTictactoeResult(clientData) {
         }
         await db.Tictactoe.create(newUserTictactoeData);
       }
+
+      await handleSetGameHistoryData('Tic Tac Toe');
 
       resolve({
         status: 200,

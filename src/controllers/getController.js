@@ -71,6 +71,17 @@ class GetController {
       return res.status(500).json(err);
     }
   }
+  async getChartGridData(req, res) {
+    try {
+      const { status, payload } = await getService.getChartGridData(
+        req.params.type
+      );
+      return res.status(status).json(payload);
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
+    }
+  }
 }
 
 export default new GetController();

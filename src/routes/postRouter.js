@@ -17,4 +17,6 @@ postRouter.post(
   postController.handleSaveTictactoeResult
 );
 
+// postRouter.post('/test', postController.handleTest);
+
 export default postRouter;
