@@ -3,7 +3,7 @@
     "username": "root",
     "password": null,
     "database": "game",
-    "host": "127.0.0.1",
+    "host": "https://marcus-game-server.onrender.com",
     "dialect": "mysql",
     "logging": false,
     "query": {
@@ -15,7 +15,7 @@
     "username": "root",
     "password": null,
     "database": "database_test",
-    "host": "127.0.0.1",
+    "host": "https://marcus-game-server.onrender.com",
     "dialect": "mysql",
     "logging": false,
     "query": {
@@ -27,7 +27,7 @@
     "username": "root",
     "password": null,
     "database": "database_production",
-    "host": "127.0.0.1",
+    "host": "https://marcus-game-server.onrender.com",
     "dialect": "mysql",
     "logging": false,
     "query": {
