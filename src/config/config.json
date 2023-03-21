@@ -3,7 +3,7 @@
     "username": "root",
     "password": null,
     "database": "game",
-    "host": "https://marcus-game-server.onrender.com",
+    "host": "https://api.render.com/deploy/srv-cgcs4s4eoogljtqp02t0?key=fGvVT8FJ7uo",
     "dialect": "mysql",
     "logging": false,
     "query": {
@@ -15,7 +15,7 @@
     "username": "root",
     "password": null,
     "database": "database_test",
-    "host": "https://marcus-game-server.onrender.com",
+    "host": "https://api.render.com/deploy/srv-cgcs4s4eoogljtqp02t0?key=fGvVT8FJ7uo",
     "dialect": "mysql",
     "logging": false,
     "query": {
@@ -27,7 +27,7 @@
     "username": "root",
     "password": null,
     "database": "database_production",
-    "host": "https://marcus-game-server.onrender.com",
+    "host": "https://api.render.com/deploy/srv-cgcs4s4eoogljtqp02t0?key=fGvVT8FJ7uo",
     "dialect": "mysql",
     "logging": false,
     "query": {

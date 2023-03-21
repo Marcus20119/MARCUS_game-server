@@ -2,7 +2,7 @@ const { Sequelize } = require('sequelize');
 // import Sequelize from 'sequelize';
 
 const sequelize = new Sequelize('game', 'root', null, {
-  host: 'https://marcus-game-server.onrender.com',
+  host: 'https://api.render.com/deploy/srv-cgcs4s4eoogljtqp02t0?key=fGvVT8FJ7uo',
   dialect: 'mysql',
   // Ngăn không cho in ra lệnh query
   logging: false,
