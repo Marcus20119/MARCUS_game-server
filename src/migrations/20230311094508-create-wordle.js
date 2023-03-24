@@ -12,7 +12,7 @@ module.exports = {
       userId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'users',
+          model: 'Users', // Postgres thì viết hoa chữ đầu, mySQL thì không
           key: 'id',
         },
         onUpdate: 'CASCADE',

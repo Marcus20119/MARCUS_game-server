@@ -30,7 +30,7 @@ async function handleSetGameHistoryData(game) {
       } else {
         await db.GameHistory.create({ year, month, day, game, nPlay: 1 });
       }
-      resolve();
+      return resolve();
     } catch (err) {
       reject(err);
     }
@@ -42,7 +42,7 @@ async function handleSaveWordleResult(clientData) {
     try {
       // Kiểm tra xem data cos status và userId hay không
       if (!clientData.status && !clientData.userId) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Missing parameters',
@@ -51,7 +51,7 @@ async function handleSaveWordleResult(clientData) {
       }
       // Kiểm tra xem data cos status và userId hay không
       if (clientData.status === 'win' && !clientData.currentRow) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Missing "currentRow" parameter',
@@ -100,7 +100,7 @@ async function handleSaveWordleResult(clientData) {
         await db.Wordle.create(newUserWordleData);
       }
       await handleSetGameHistoryData('Wordle');
-      resolve({
+      return resolve({
         status: 200,
         payload: {
           message: "Update user's wordle data successfully",
@@ -116,7 +116,7 @@ async function handleSaveTictactoeResult(clientData) {
     try {
       // Kiểm tra xem data cos status và userId hay không
       if (!clientData.status && !clientData.userId) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Missing parameters',
@@ -125,7 +125,7 @@ async function handleSaveTictactoeResult(clientData) {
       }
       // Kiểm tra xem data cos status và userId hay không
       if (clientData.status === 'win' && !clientData.playerMark) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Missing "playerMark" parameter',
@@ -177,7 +177,7 @@ async function handleSaveTictactoeResult(clientData) {
 
       await handleSetGameHistoryData('Tic Tac Toe');
 
-      resolve({
+      return resolve({
         status: 200,
         payload: {
           message: "Update user's Tictactoe data successfully",

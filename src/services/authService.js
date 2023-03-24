@@ -14,7 +14,7 @@ async function handleRefreshToken(clientData) {
     try {
       // Kiểm tra xem trong request có chứa refreshToken không
       if (!clientData.refreshToken) {
-        resolve({
+        return resolve({
           status: 401,
           payload: {
             message: 'refreshToken is needed',
@@ -35,7 +35,7 @@ async function handleRefreshToken(clientData) {
               });
             // Kiểm tra xem refreshToken có trong refreshToken table của user không
             if (clientData.refreshToken !== userRefreshToken) {
-              resolve({
+              return resolve({
                 status: 403,
                 payload: {
                   message: 'refreshToken not found',
@@ -48,7 +48,7 @@ async function handleRefreshToken(clientData) {
              * Nếu có thì trả về new accessToken
              *  */
             if (err) {
-              resolve({
+              return resolve({
                 status: 403,
                 payload: {
                   message: 'Invalid refreshToken',
@@ -63,7 +63,7 @@ async function handleRefreshToken(clientData) {
                 expiresIn: '15s',
               }
             );
-            resolve({
+            return resolve({
               status: 200,
               payload: {
                 message: 'Create new accessToken successfully',
@@ -90,16 +90,17 @@ async function createRefreshToken(userId, payload) {
       const user = await db.RefreshToken.findOne({
         where: { userId },
       });
-      if (user) {
-        user.refreshToken = refreshToken;
-        user.save();
+      if (!user) {
+        await db.RefreshToken.create({ refreshToken, userId });
       } else {
-        const refreshTokenTable = await db.RefreshToken.build({
-          userId,
-          refreshToken,
-        });
-        await refreshTokenTable.save();
+        await db.RefreshToken.update(
+          { refreshToken },
+          {
+            where: { userId },
+          }
+        );
       }
+
       resolve(refreshToken);
     } catch (err) {
       reject(err);
@@ -112,7 +113,7 @@ async function handleSignIn(signInData) {
     try {
       // Kiểm tra xem có nhập email và password không
       if (!signInData.email && !signInData.password) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Missing input parameters',
@@ -125,7 +126,7 @@ async function handleSignIn(signInData) {
       });
       // Kiểm tra có user không (Có nhập đúng email không)
       if (!userInfo) {
-        resolve({
+        return resolve({
           status: 404,
           payload: {
             message: 'User is not exist',
@@ -138,7 +139,7 @@ async function handleSignIn(signInData) {
         userInfo.password
       );
       if (!isPasswordCorrect) {
-        resolve({
+        return resolve({
           status: 400,
           payload: {
             message: 'Wrong password',
@@ -155,7 +156,7 @@ async function handleSignIn(signInData) {
           expiresIn: '15s',
         }
       );
-      resolve({
+      return resolve({
         status: 200,
         payload: {
           message: '',
@@ -180,7 +181,7 @@ async function handleSignUp(signUpData) {
         !signUpData.firstName &&
         !signUpData.lastName
       ) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Missing input parameters',
@@ -189,7 +190,7 @@ async function handleSignUp(signUpData) {
       }
       // Check validate Email
       if (!isEmailValid(signUpData.email)) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Invalid Email Syntax',
@@ -198,7 +199,7 @@ async function handleSignUp(signUpData) {
       }
       // Check validate password (Phải đúng 8 ký tự)
       if (signUpData.password.length !== 8) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Password must be 8 characters',
@@ -212,7 +213,7 @@ async function handleSignUp(signUpData) {
       });
       // Kiểm tra xem đã tồn tại User này chưa
       if (isAlreadyExist) {
-        resolve({
+        return resolve({
           status: 409,
           payload: {
             message: 'User has already existed',
@@ -244,7 +245,7 @@ async function handleSignUp(signUpData) {
         }
       );
 
-      resolve({
+      return resolve({
         status: 200,
         payload: {
           message: 'Sign Up successfully',

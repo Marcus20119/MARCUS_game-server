@@ -18,7 +18,7 @@ async function getAllData(modelName, query, type) {
       const data = await db[modelName].findAll({
         offset,
         limit,
-        where: { isDeleted: type === 'deleted' ? 1 : 0 },
+        where: { isDeleted: type === 'deleted' ? true : false }, // Postgres thì true/false còn mySQL thì 1/0
         order: [
           [
             query?.orderField ? query.orderField : 'id',
@@ -28,9 +28,9 @@ async function getAllData(modelName, query, type) {
         raw: true,
       });
       const { count: countRow } = await db[modelName].findAndCountAll({
-        where: { isDeleted: type === 'deleted' ? 1 : 0 },
+        where: { isDeleted: type === 'deleted' ? true : false }, // Postgres thì true/false còn mySQL thì 1/0
       });
-      resolve({
+      return resolve({
         status: 200,
         payload: {
           message: `Get page ${
@@ -73,15 +73,15 @@ async function getDataByUserId(modelName, userId) {
       if (data) {
       }
       if (!data) {
-        resolve({
+        return resolve({
           status: 404,
           payload: {
             message: 'Data not found',
           },
         });
       }
-      const { password, UserId, ...resData } = data;
-      resolve({
+      const { password, ...resData } = data;
+      return resolve({
         status: 200,
         payload: {
           message: `Get data successfully`,
@@ -195,7 +195,7 @@ async function getChartPipeData() {
         },
       ];
 
-      resolve({
+      return resolve({
         status: 200,
         payload: {
           message: `Get data successfully`,
@@ -277,7 +277,7 @@ async function getChartGridData(type) {
             }
             resData[index].data.reverse();
           }
-          resolve({
+          return resolve({
             status: 200,
             payload: {
               message: 'Get day chart data successfully',
@@ -286,7 +286,7 @@ async function getChartGridData(type) {
           });
         }
         default: {
-          resolve({
+          return resolve({
             status: 422,
             payload: {
               message: 'Missing type chart parameters',

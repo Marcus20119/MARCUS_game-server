@@ -5,7 +5,7 @@ async function handleUpdateUser(clientData, userId) {
     try {
       // Kiểm tra xem có nhập email và password không
       if (!userId) {
-        resolve({
+        return resolve({
           status: 422,
           payload: {
             message: 'Missing userId',
@@ -18,7 +18,7 @@ async function handleUpdateUser(clientData, userId) {
       });
       // Kiểm tra có user không (Có nhập đúng email không)
       if (!userInfo) {
-        resolve({
+        return resolve({
           status: 404,
           payload: {
             message: 'User is not exist',
@@ -31,7 +31,7 @@ async function handleUpdateUser(clientData, userId) {
         },
       });
 
-      resolve({
+      return resolve({
         status: 200,
         payload: {
           message: 'Update user data successfully',

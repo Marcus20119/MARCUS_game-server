@@ -9,9 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.hasOne(models.Wordle);
-      this.hasOne(models.Tictactoe);
-      this.hasOne(models.RefreshToken);
+      this.hasOne(models.Wordle, {
+        foreignKey: 'userId',
+      });
+      this.hasOne(models.Tictactoe, {
+        foreignKey: 'userId',
+      });
+      this.hasOne(models.RefreshToken, {
+        foreignKey: 'userId',
+      });
     }
   }
   User.init(

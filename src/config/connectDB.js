@@ -1,12 +1,32 @@
 const { Sequelize } = require('sequelize');
 // import Sequelize from 'sequelize';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const sequelize = new Sequelize('game', 'root', null, {
-  host: 'https://api.render.com/deploy/srv-cgcs4s4eoogljtqp02t0?key=fGvVT8FJ7uo',
-  dialect: 'mysql',
-  // Ngăn không cho in ra lệnh query
-  logging: false,
-});
+const sequelize = new Sequelize(
+  process.env.DB_DATABASE_NAME,
+  process.env.DB_USERNAME,
+  '8dwN3yyawRvN5ic6',
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: 'postgres',
+    logging: false,
+    dialectOptions:
+      process.env.DB_SSL === 'true'
+        ? {
+            ssl: {
+              require: true,
+              rejectUnauthorized: false,
+            },
+          }
+        : {},
+    query: {
+      raw: true,
+    },
+    timezone: '+07:00',
+  }
+);
 
 const connectDB = async () => {
   try {
