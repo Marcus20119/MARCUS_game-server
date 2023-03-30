@@ -112,7 +112,7 @@ async function handleSignIn(signInData) {
   return new Promise(async (resolve, reject) => {
     try {
       // Kiểm tra xem có nhập email và password không
-      if (!signInData.email && !signInData.password) {
+      if (!signInData.email || !signInData.password) {
         return resolve({
           status: 422,
           payload: {
@@ -176,9 +176,9 @@ async function handleSignUp(signUpData) {
     try {
       // Kiểm tra xem có nhập email và password không
       if (
-        !signUpData.email &&
-        !signUpData.password &&
-        !signUpData.firstName &&
+        !signUpData.email ||
+        !signUpData.password ||
+        !signUpData.firstName ||
         !signUpData.lastName
       ) {
         return resolve({
@@ -226,7 +226,7 @@ async function handleSignUp(signUpData) {
         ...signUpData,
         password: bcrypt.hashSync(signUpData.password, salt),
         roleId: 0,
-        isDeleted: 0,
+        isDeleted: false,
       });
       await newUser.save();
 

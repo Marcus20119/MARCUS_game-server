@@ -41,7 +41,7 @@ async function handleSaveWordleResult(clientData) {
   return new Promise(async (resolve, reject) => {
     try {
       // Kiểm tra xem data cos status và userId hay không
-      if (!clientData.status && !clientData.userId) {
+      if (!clientData.status || !clientData.userId) {
         return resolve({
           status: 422,
           payload: {
@@ -50,7 +50,7 @@ async function handleSaveWordleResult(clientData) {
         });
       }
       // Kiểm tra xem data cos status và userId hay không
-      if (clientData.status === 'win' && !clientData.currentRow) {
+      if (clientData.status === 'win' || !clientData.currentRow) {
         return resolve({
           status: 422,
           payload: {
@@ -115,7 +115,7 @@ async function handleSaveTictactoeResult(clientData) {
   return new Promise(async (resolve, reject) => {
     try {
       // Kiểm tra xem data cos status và userId hay không
-      if (!clientData.status && !clientData.userId) {
+      if (!clientData.status || !clientData.userId) {
         return resolve({
           status: 422,
           payload: {
@@ -124,7 +124,7 @@ async function handleSaveTictactoeResult(clientData) {
         });
       }
       // Kiểm tra xem data cos status và userId hay không
-      if (clientData.status === 'win' && !clientData.playerMark) {
+      if (clientData.status === 'win' || !clientData.playerMark) {
         return resolve({
           status: 422,
           payload: {
